@@ -1,10 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { userEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create.dto';
-
-export type User = any;
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -13,34 +12,30 @@ export class UsersService {
   @InjectRepository(userEntity) 
   private readonly userRepository: Repository<userEntity>
 ) {}
-  
-  async findAll(): Promise<userEntity[]> {
-    return await this.userRepository.find();
-  }
 
-  async create(dto: CreateUserDto): Promise<User> {
+  async create(dto: CreateUserDto): Promise<userEntity> {
+
+    const saltRounds = 10;
+    const userId = dto.id;
+    const existUser = await this.userRepository
+    .createQueryBuilder('user')
+    .where('user.userId = :userId', {userId})
+    .select([ 'user.userId'])
+    .getOne();
+
+    if (existUser) {
+      throw new HttpException('User is already exists', HttpStatus.BAD_REQUEST);
+    }
+
+    dto.password = await bcrypt.hash(
+      dto.password,
+      saltRounds
+    );
+
     const user = this.userRepository.create(dto);
+
+    await this.userRepository.save(user);
     
-    return await this.userRepository.save(user);
+    return user;
   }
-
-  // create(createUserDto: CreateUserDto) {
-  //   return 'This action adds a new user';
-  // }
-
-  // findAll() {
-  //   return `This action returns all users`;
-  // }
-
-  // findOne(username: string) {
-  //   return `This action returns a #${username} user`;
-  // }
-
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
 }

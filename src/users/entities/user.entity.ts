@@ -1,11 +1,15 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
-
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
 @Entity({ name: 'users'})
 export class userEntity {
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn('uuid')  
     id!: string;
 
-    @Column()
+    @Column({
+        type: 'varchar',
+        unique: true,
+        nullable: false,
+        length: 255
+    })
     email!: string;
 
     @Column()
