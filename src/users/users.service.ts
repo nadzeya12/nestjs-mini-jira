@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { userEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create.dto';
-
-export type User = any;
+import * as bcrypt from 'bcrypt';
+import { UUID } from 'crypto';
+import { loginDto} from '../auth/dto/SignIn.dto';
 
 @Injectable()
 export class UsersService {
@@ -13,34 +13,53 @@ export class UsersService {
   @InjectRepository(userEntity) 
   private readonly userRepository: Repository<userEntity>
 ) {}
-  
-  async findAll(): Promise<userEntity[]> {
-    return await this.userRepository.find();
+
+  async findById(id: UUID): Promise<userEntity> {
+    const user = await this.userRepository.findOneBy({id});
+
+    if (!user) {
+      throw new NotFoundException('User with id ${id} not found');
+    }
+
+    return user;
   }
 
-  async create(dto: CreateUserDto): Promise<User> {
+  async findUsrByUserId(id: string): Promise<userEntity> {
+    const user = await this.userRepository
+    .createQueryBuilder('user')
+    .where('user.userId = :userId',{id})
+    .getOne();
+
+    if (!user) {
+      throw new NotFoundException('User with id ${id} not found');
+    }
+
+    return user;
+  }
+
+  async create(dto: loginDto): Promise<userEntity> {
+
+    const saltRounds = 10;
+    const userId = dto.userId;
+    const existUser = await this.userRepository
+    .createQueryBuilder('user')
+    .where('user.userId = :userId', {userId})
+    .select([ 'user.userId'])
+    .getOne();
+
+    if (existUser) {
+      throw new HttpException('User is already exists', HttpStatus.BAD_REQUEST);
+    }
+
+    dto.password = await bcrypt.hash(
+      dto.password,
+      saltRounds
+    );
+
     const user = this.userRepository.create(dto);
-    
-    return await this.userRepository.save(user);
+
+    await this.userRepository.save(user);
+
+    return user;
   }
-
-  // create(createUserDto: CreateUserDto) {
-  //   return 'This action adds a new user';
-  // }
-
-  // findAll() {
-  //   return `This action returns all users`;
-  // }
-
-  // findOne(username: string) {
-  //   return `This action returns a #${username} user`;
-  // }
-
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
 }

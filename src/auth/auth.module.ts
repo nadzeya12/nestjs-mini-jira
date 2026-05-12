@@ -1,43 +1,43 @@
-// import { Module } from '@nestjs/common';
-// import { UsersModule } from '../users/users.module'; 
-// import { AuthService } from './auth.service';
-// import {JwtModule, JwtSecretRequestType} from '@nestjs/jwt';
-// import { AuthController } from './auth.controller';
+import { Module } from '@nestjs/common';
+//import { UsersModule } from '../users/users.module'; 
+import { AuthService } from './auth.service';
+import {JwtModule} from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth.guard';
+import { AuthController } from './auth.controller';
+import { UsersService } from '../users/users.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { userEntity } from '../users/entities/user.entity';
 
-
-// JwtModule.register ({
-//     secret: 'whin1378xnsk&jdjqk',
-
-//     privateKey: '22222222222',
-
-//     publicKey: '7778877887788'
-
-// })
-// secretProvider: (
-//     requestType: JwtSecretRequestType,
-//     token: string,
-// ) => {
-//     switch (requestType) {
-//         case JwtSecretRequestType.SIGN:
-//             return 'private-key';
-
-//         case JwtSecretRequestType.VERIFY:
-//             return 'publicKey';
-
-//         default:
-//             return 'hard-to-guess-key'
-//     }
-// }
-// @Module({
-//     imports: [UsersModule,
-//         JwtModule.register({
-//             global: true,
-//             signOptions: {expiresIn: '60s'}
-//             //secret: secretProvider
-//         })
-//     ],
-//     providers: [AuthService],
-//     controllers: [AuthService],
-//     exports: [AuthService]
-// })
-// export class AuthModule {}
+@Module({
+    imports: 
+    [
+        TypeOrmModule.forFeature([userEntity]),
+        JwtModule.registerAsync({
+            imports: [ConfigModule],
+            useFactory: async (configService: ConfigService) => {
+                return {
+                    secret: 'mnkdjs8sdnihjn33kmcks9',
+                };
+            },
+            inject: [ConfigService],
+            global: true
+        }),
+        JwtModule.register({
+            signOptions: { expiresIn: '60s' },
+        }),
+        ConfigModule
+    ],
+    providers: [
+        // {
+        //     provide: APP_GUARD,
+        //     useClass: AuthGuard,
+        // },
+        AuthService,
+        UsersService
+    ],
+    controllers: [AuthController],
+    exports: [AuthService]
+})
+export class AuthModule {}

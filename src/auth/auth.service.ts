@@ -1,39 +1,70 @@
-// import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
-// import { UsersService } from '../users/users.service';
-// import * as bcrypt from 'bcrypt';
-// import {JwtService} from '@nestjs/jwt'
+import { BadRequestException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import { UsersService } from '../users/users.service';
+import * as bcrypt from 'bcrypt';
+import {JwtService} from '@nestjs/jwt'
+import { userEntity } from '../users/entities/user.entity';
+import { Repository } from 'typeorm';
+import { signUpDto } from './dto/SignIn.dto';
+import { InjectRepository } from '@nestjs/typeorm';
 
-// @Injectable()
-// export class AuthService {
-//     constructor( 
-//       private usersService: UsersService, 
-//     ) {}
+@Injectable()
+export class AuthService {
+    constructor( 
+      private usersService: UsersService, 
+      private JwtService: JwtService,
 
-//   async validateUser(username: string, pass: string) {
-//     const user = await this.usersService.findOne(username);
+      @InjectRepository(userEntity) 
+        private readonly authRepository: Repository<userEntity>
+      ) {}
 
-//     if( user && bcrypt.compare(pass, user.password)) {
-//       const {password, ...result} = user;
-//       return result
-//     }
-//     return HttpStatus.FORBIDDEN;
-//   }
+    async logIn( email:string, pass:string):
+    Promise<any>{
 
-//     //async signIn( username: string, pass: string,): 
-//     //Promise<{ access_token: string }> {
+    const user = await this.usersService.findUsrByUserId(email);
+    let isValidPass = await bcrypt.compare(pass, user.password);
 
-//     //const user = await this.usersService.findOne(username);
+    if (!isValidPass) { 
+      throw new BadRequestException(
+        "invalid password"
+      );
+    }
 
-//     // if () {
-//     //   throw new UnauthorizedException();
-//     // }
+    // const payload = {userId: user.id, sub: user.id};
+    // return {
+    //   access_token: await this.JwtService.signAsync(payload),
+    // };
+  }
 
-//     //const payload = { sub: user.userId, username: user.username };
-//     //return {
-//       // 💡 Here the JWT secret key that's used for signing the payload 
-//       // is the key that was passed in the JwtModule
+  async signUp(dto: signUpDto): Promise<userEntity> {
 
-//       //access_token: await this.jwtService.signAsync(payload),
-//     //};
-//   //}
-// }
+    const saltRounds = 10;
+    const userId = dto.id;
+
+    console.log("dto: ", dto)
+
+    const existUser = await this.authRepository
+    .createQueryBuilder('user')
+    .where('user.userId = :userId', {userId})
+    .select([ 'user.userId'])  
+    .getOne();
+
+    if (existUser) {
+      throw new HttpException('User is already exists', HttpStatus.BAD_REQUEST);
+    }
+
+    dto.password = await bcrypt.hash(
+      dto.password,
+      saltRounds
+    );
+
+    const user = this.authRepository.create(dto);
+
+    await this.authRepository.save(user);
+
+    return user;
+  }
+
+  async profile(userId: string): Promise<userEntity> {
+    return this.usersService.findUsrByUserId(userId);
+  }
+}
