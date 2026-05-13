@@ -6,21 +6,22 @@ import { userEntity } from '../users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { signUpDto } from './dto/SignIn.dto';
 import { InjectRepository } from '@nestjs/typeorm';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class AuthService {
     constructor( 
       private usersService: UsersService, 
-      private JwtService: JwtService,
+      private jwtService: JwtService,
 
       @InjectRepository(userEntity) 
         private readonly authRepository: Repository<userEntity>
       ) {}
 
-    async logIn( email:string, pass:string):
-    Promise<any>{
+    async logIn(email: string, pass:string): Promise<any> {
 
     const user = await this.usersService.findUsrByUserId(email);
+
     let isValidPass = await bcrypt.compare(pass, user.password);
 
     if (!isValidPass) { 
@@ -29,23 +30,21 @@ export class AuthService {
       );
     }
 
-    // const payload = {userId: user.id, sub: user.id};
-    // return {
-    //   access_token: await this.JwtService.signAsync(payload),
-    // };
+    const payload = {userId: user.id, sub: user.id};
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 
   async signUp(dto: signUpDto): Promise<userEntity> {
 
     const saltRounds = 10;
-    const userId = dto.id;
-
-    console.log("dto: ", dto)
+    const hashedPassword = await bcrypt.hash(dto.password, saltRounds);
 
     const existUser = await this.authRepository
     .createQueryBuilder('user')
-    .where('user.userId = :userId', {userId})
-    .select([ 'user.userId'])  
+    .where('user.email = :email', {email: dto.email})
+    .select(['user.id'])  
     .getOne();
 
     if (existUser) {
@@ -57,11 +56,11 @@ export class AuthService {
       saltRounds
     );
 
-    const user = this.authRepository.create(dto);
+    const user = this.authRepository.create({...dto, id: randomUUID()});
 
-    await this.authRepository.save(user);
+    const savedUser = await this.authRepository.save(user);
 
-    return user;
+    return savedUser;
   }
 
   async profile(userId: string): Promise<userEntity> {

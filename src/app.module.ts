@@ -10,8 +10,8 @@ import { AuthService } from './auth/auth.service';
 import { AuthController } from './auth/auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './auth/auth.guard';
+// import { APP_GUARD } from '@nestjs/core';
+// import { AuthGuard } from './auth/auth.guard';
 // import { ProjectsModule } from './projects/projects.module';
 // import { projectEntity } from './projects/entities/project.entity';
 // import { TasksModule } from './tasks/tasks.module';
@@ -59,10 +59,10 @@ import { AuthGuard } from './auth/auth.guard';
   ],
   controllers: [AppController, AuthController],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthGuard,
+    // },
   AppService, 
   AuthService, 
   UsersService],

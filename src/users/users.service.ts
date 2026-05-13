@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { userEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create.dto';
-
-export type User = any;
+import { signUpDto } from '../auth/dto/SignIn.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -18,29 +18,15 @@ export class UsersService {
     return await this.userRepository.find();
   }
 
-  async create(dto: CreateUserDto): Promise<User> {
-    const user = this.userRepository.create(dto);
-    
-    return await this.userRepository.save(user);
+  async findUsrByUserId (email: string): Promise<userEntity> {
+    const user = await this.userRepository
+    .createQueryBuilder('user')
+    .where('user.email = :email', {email}) 
+    .getOne();
+
+    if (!user) {
+    throw new NotFoundException('User with id ${id} not found')
   }
-
-  // create(createUserDto: CreateUserDto) {
-  //   return 'This action adds a new user';
-  // }
-
-  // findAll() {
-  //   return `This action returns all users`;
-  // }
-
-  // findOne(username: string) {
-  //   return `This action returns a #${username} user`;
-  // }
-
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
+  return user;
+  }
 }
