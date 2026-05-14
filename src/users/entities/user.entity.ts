@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
 @Entity({ name: 'users'})
+
 export class userEntity {
     @PrimaryColumn('uuid')  
     id!: string;

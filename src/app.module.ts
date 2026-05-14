@@ -10,10 +10,12 @@ import { AuthService } from './auth/auth.service';
 import { AuthController } from './auth/auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
+import { ProjectsModule } from './projects/projects.module';
+import { projectEntity } from './projects/entities/project.entity';
+import { ProjectsService } from './projects/projects.service';
+import { ProjectsController } from './projects/projects.controller';
 // import { APP_GUARD } from '@nestjs/core';
 // import { AuthGuard } from './auth/auth.guard';
-// import { ProjectsModule } from './projects/projects.module';
-// import { projectEntity } from './projects/entities/project.entity';
 // import { TasksModule } from './tasks/tasks.module';
 // import { tasksEntity } from './tasks/entities/task.entity';
 
@@ -22,7 +24,7 @@ import { UsersService } from './users/users.service';
     ConfigModule.forRoot({
       isGlobal: true
     }),
-    TypeOrmModule.forFeature([userEntity,//projectEntity, tasksEntity
+    TypeOrmModule.forFeature([userEntity, projectEntity, //tasksEntity
     ]),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -42,7 +44,7 @@ import { UsersService } from './users/users.service';
               imports: [ConfigModule],
               useFactory: async (configService: ConfigService) => {
                   return {
-                      secret: 'mnkdjs8sdnihjn33kmcks9',
+                    secret: 'mnkdjs8sdnihjn33kmcks9',
                   };
               },
               inject: [ConfigService],
@@ -52,20 +54,22 @@ import { UsersService } from './users/users.service';
               signOptions: { expiresIn: '60s' },
           }),
   //TasksModule,
-  //ProjectsModule,
+  ProjectsModule,
   //UsersModule,
   AuthModule,
   ConfigModule
   ],
-  controllers: [AppController, AuthController],
+  controllers: [AppController, AuthController, ProjectsController],
   providers: [
+    AppService, 
+    AuthService, 
+    UsersService,
+    ProjectsService
     // {
     //   provide: APP_GUARD,
     //   useClass: AuthGuard,
     // },
-  AppService, 
-  AuthService, 
-  UsersService],
+  ],
 
 })
 export class AppModule {}

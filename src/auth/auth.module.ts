@@ -9,16 +9,21 @@ import { AuthController } from './auth.controller';
 import { UsersService } from '../users/users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { userEntity } from '../users/entities/user.entity';
+import { JwtStrategy } from './strategy/jwt.strategy';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
     imports: 
     [
         TypeOrmModule.forFeature([userEntity]),
         JwtModule.registerAsync({
-            imports: [ConfigModule],
+            imports: [
+                ConfigModule,
+                PassportModule
+            ],
             useFactory: async (configService: ConfigService) => {
                 return {
-                    secret: 'mnkdjs8sdnihjn33kmcks9',
+                    secret: process.env.JWT_SECRET
                 };
             },
             inject: [ConfigService],
@@ -35,7 +40,8 @@ import { userEntity } from '../users/entities/user.entity';
         //     useClass: AuthGuard,
         // },
         AuthService,
-        UsersService
+        UsersService,
+        JwtStrategy
     ],
     controllers: [AuthController],
     exports: [AuthService]

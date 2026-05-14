@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import {JwtService} from '@nestjs/jwt'
@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { signUpDto } from './dto/SignIn.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
+import { use } from 'passport';
 
 @Injectable()
 export class AuthService {
@@ -65,5 +66,17 @@ export class AuthService {
 
   async profile(userId: string): Promise<userEntity> {
     return this.usersService.findUsrByUserId(userId);
+  }
+
+  async validate(id: string) {
+    const user = await this.authRepository.findOne({
+      where: {
+        id
+      },
+    });
+    
+    if (!user) throw new NotFoundException('User not found/authorized');
+
+    return user.id;
   }
 }

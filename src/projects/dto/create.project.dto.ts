@@ -4,5 +4,7 @@ export class CreateProjectDto {
     @IsNotEmpty()
     @IsString()
     title!: string;
+    
+    @IsString()
     description!: string;
 }
