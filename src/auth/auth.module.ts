@@ -9,7 +9,6 @@ import { AuthController } from './auth.controller';
 import { UsersService } from '../users/users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { userEntity } from '../users/entities/user.entity';
-import { JwtStrategy } from './strategy/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 
 @Module({
@@ -40,8 +39,7 @@ import { PassportModule } from '@nestjs/passport';
         //     useClass: AuthGuard,
         // },
         AuthService,
-        UsersService,
-        JwtStrategy
+        UsersService
     ],
     controllers: [AuthController],
     exports: [AuthService]

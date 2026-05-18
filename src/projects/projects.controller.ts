@@ -1,34 +1,37 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, UseGuards } from '@nestjs/common';
-import { Repository } from 'typeorm';
-//import { projectEntity } from './entities/project.entity';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Query} from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create.project.dto';
-// import { AuthGuard } from '../auth/auth.guard';
-import { AuthGuard } from '@nestjs/passport';
 
 @Controller('projects')
 
 export class ProjectsController {
   constructor(private readonly projectService: ProjectsService) {}
 
-  @UseGuards(AuthGuard('jwt'))
-  @Post()
-  create( @Body() dto: CreateProjectDto ) {
-    return this.projectService.createProject(dto)
-    }
-
-  @Get()
-  findAll() {
-    return this.projectService.findAll();
+  @Get(':userId')
+  findAll(
+    @Param('userId', ParseUUIDPipe) userId: string) {
+    console.log('returned id: ', userId)
+    return this.projectService.findAllByUser(userId);
   }
-
-  @Get('projects/:id')
+  
+  @Get(':id')
   findById(@Param('id') id: string) {
     return this.projectService.findById(id);
   }
-
-  @Delete('projects/:id')
+  
+  @Delete(':id')
   deleteProject(@Param('id') id: string) {
     return this.projectService.deleteProject(id);
   }
-} 
+
+  @Post(':userId')
+  create( 
+    @Param('userId', ParseUUIDPipe) userId: string, 
+    @Body() dto: CreateProjectDto 
+    ) {
+
+    return this.projectService.createProject(userId, dto);
+    console.log('returned id: ', userId);
+  }
+
+}

@@ -7,7 +7,6 @@ import { Repository } from 'typeorm';
 import { signUpDto } from './dto/SignIn.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
-import { use } from 'passport';
 
 @Injectable()
 export class AuthService {

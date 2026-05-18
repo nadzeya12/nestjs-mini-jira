@@ -1,9 +1,10 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, CreateDateColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { userEntity } from "../../users/entities/user.entity";
+import { IsUUID } from "class-validator";
 
 @Entity({ name: 'projects'})
 export class projectEntity {
-    @PrimaryGeneratedColumn() 
+    @PrimaryColumn() 
     id!: string;
 
     @Column({
@@ -20,6 +21,7 @@ export class projectEntity {
     description!: string;
 
     @Column({ name: 'userId'})
+    @IsUUID()
     userId!: string;
 
     @ManyToOne(() => userEntity, (user) => user.id, { onDelete: 'CASCADE'})

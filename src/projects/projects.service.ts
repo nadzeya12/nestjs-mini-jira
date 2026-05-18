@@ -3,48 +3,53 @@ import { projectEntity } from './entities/project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateProjectDto } from './dto/create.project.dto';
-import { randomBytes, randomInt } from 'crypto';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class ProjectsService {
-    constructor (
-      @InjectRepository(projectEntity) 
-      private readonly projectRepository: Repository<projectEntity>
-    ) {}
+  constructor (
+    @InjectRepository(projectEntity) 
+    private readonly projectRepository: Repository<projectEntity>
+  ) {}
+  
+  async findAllByUser(userId: string): Promise<projectEntity[]> {
+    return await this.projectRepository.find({
+      where: { userId: userId}
+    })
+  }
 
-    async findAll(): Promise<projectEntity[]> {
-        return await this.projectRepository.find()
-    }
+  async findById(id: string): Promise<projectEntity> {
+    const project = await this.projectRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
 
-    async findById(id: string): Promise<projectEntity> {
-        const project = await this.projectRepository.findOne({
-          where: {
-            id,
-          },
-        });
-        if(!project) throw new NotFoundException('Project not found')
-    
-        return project;
-      }
+    if(!project) throw new NotFoundException('Project not found')
 
-    async createProject( dto: CreateProjectDto): Promise<projectEntity> {
+    return project;
+  }
 
-        const project = this.projectRepository.create({
-            ...dto, 
-            id: randomBytes(16).toString('hex'),
-            //user: { id: userId}
-        });
+  async deleteProject(id: string) {
+    const project = this.projectRepository.findOneByOrFail({id});
 
-        return await this.projectRepository.save(project);
-    }
+    if(!project) throw new NotFoundException('Project with id: ${id} not found');
 
-    async deleteProject(id: string) {
-        const project = this.projectRepository.findOneByOrFail({id});
+    await this.projectRepository.delete(id);
 
-        if(!project) throw new NotFoundException('Project with id: ${id} not found');
+    return HttpStatus.NO_CONTENT;
+  }
 
-        await this.projectRepository.delete(id);
+  async createProject( userId: string, dto: CreateProjectDto): Promise<projectEntity> {
 
-        return HttpStatus.NO_CONTENT;
-    }
+    const project = this.projectRepository.create({
+      ...dto, 
+      id: randomBytes(16).toString('hex'),
+      user: { id: userId}
+    });
+
+    await this.projectRepository.save(project);
+
+    return project;
+  }
 }
