@@ -39,7 +39,7 @@ export class AuthService {
   async signUp(dto: signUpDto): Promise<userEntity> {
 
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(dto.password, saltRounds);
+    //const hashedPassword = await bcrypt.hash(dto.password, saltRounds);
 
     const existUser = await this.authRepository
     .createQueryBuilder('user')
