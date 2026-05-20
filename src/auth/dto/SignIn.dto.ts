@@ -18,9 +18,4 @@ export class loginDto {
 
     @IsString()
     password!: string
-
-    @PrimaryColumn('uuid')
-    @IsUUID()
-    @IsString()
-    userId!: string
 }

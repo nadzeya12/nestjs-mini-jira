@@ -1,8 +1,7 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { userEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { use } from 'passport';
 
 @Injectable()
 export class UsersService {
@@ -28,7 +27,7 @@ export class UsersService {
   async findUsrByUserId (email: string): Promise<userEntity> {
     const user = await this.userRepository
     .createQueryBuilder('user')
-    .where('user.email = :email', {email}) 
+    .where('user.email = :email', {email})
     .getOne();
 
     if (!user) {

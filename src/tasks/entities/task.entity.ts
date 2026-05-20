@@ -1,5 +1,6 @@
 // import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 // import { projectEntity } from "../../projects/entities/project.entity";
+// import { IsString } from "class-validator";
 
 // export enum taskStatus {
 // TO_DO = 'to_do',
@@ -7,11 +8,11 @@
 // DONE = 'done'
 // }
 
-
 // @Entity({ name: 'tasks'})
 // export class tasksEntity {
 
 //     @PrimaryGeneratedColumn()
+//     @IsString()
 //     id!: string;
 
 //     @Column({
