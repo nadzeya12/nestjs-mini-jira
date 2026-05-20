@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Query} from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Query} from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create.project.dto';
 
@@ -7,21 +7,22 @@ import { CreateProjectDto } from './dto/create.project.dto';
 export class ProjectsController {
   constructor(private readonly projectService: ProjectsService) {}
 
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deleteProject(@Param('id') id: string) {
+    return this.projectService.deleteProject(id);
+  }
+
+  @Get(':id')
+  findById(@Param('id') id: string) {
+    return this.projectService.findById(id);
+  }
+
   @Get(':userId')
   findAll(
     @Param('userId', ParseUUIDPipe) userId: string) {
     console.log('returned id: ', userId)
     return this.projectService.findAllByUser(userId);
-  }
-  
-  @Get(':id')
-  findById(@Param('id') id: string) {
-    return this.projectService.findById(id);
-  }
-  
-  @Delete(':id')
-  deleteProject(@Param('id') id: string) {
-    return this.projectService.deleteProject(id);
   }
 
   @Post(':userId')

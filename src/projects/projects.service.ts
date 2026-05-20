@@ -47,7 +47,7 @@ export class ProjectsService {
 
     if(!project) throw new NotFoundException('Project with id: ${id} not found');
 
-    await this.projectRepository.delete(project);
+    return await this.projectRepository.remove(project);
   }
 
   async createProject( userId: string, dto: CreateProjectDto): Promise<projectEntity> {
