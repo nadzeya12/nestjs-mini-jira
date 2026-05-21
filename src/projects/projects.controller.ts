@@ -1,8 +1,10 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Query, UseGuards} from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create.project.dto';
-import { AuthGuard } from './guards/token.guard';
 import { projectOwnerGuard } from './guards/project.owner.guard';
+import { listOfProjects } from './guards/findlistProjects.guard';
+import { Headers } from '@nestjs/common';
+import { AuthGuard } from './guards/token.guard';
 
 @Controller('projects')
 
@@ -11,27 +13,23 @@ export class ProjectsController {
 
   @Get(':id')
   @UseGuards(AuthGuard, projectOwnerGuard)
-  findById(@Param('id') id: string) {
-    return this.projectService.findById(id);
+  findById(@Param('id') userId: string) {
+    return this.projectService.findById(userId);
   }
 
   @Get()
-  @UseGuards(AuthGuard, projectOwnerGuard)
+  @UseGuards(listOfProjects)
   findAll(
-    @Param('userId', ParseUUIDPipe) userId: string) {
+    @Headers('userId') userId: string) {
     console.log('returned id: ', userId)
     return this.projectService.findAllByUser(userId);
   }
 
-  @Post(':userId')
-  create( 
-    @Param('userId', ParseUUIDPipe) userId: string, 
-    @Body() dto: CreateProjectDto 
-    ) {
-
-    return this.projectService.createProject(userId, dto);
-    console.log('returned id: ', userId);
-  }
+  // @Post()
+  // @UseGuards(projectOwnerGuard)
+  // create( @Body() dto: CreateProjectDto ) {
+  //   return this.projectService.createProject(dto);
+  // }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)

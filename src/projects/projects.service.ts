@@ -30,10 +30,10 @@ export class ProjectsService {
     });
   }
 
-  async findById(id: string): Promise<projectEntity> {
+  async findById(userId: string): Promise<projectEntity> {
     const project = await this.projectRepository.findOne({
       where: {
-        id: id,
+        userId: userId,
       },
     });
 
@@ -50,12 +50,13 @@ export class ProjectsService {
     return await this.projectRepository.remove(project);
   }
 
-  async createProject( userId: string, dto: CreateProjectDto): Promise<projectEntity> {
+  async createProject( dto: CreateProjectDto ): Promise<projectEntity> {
 
     const project = this.projectRepository.create({
       ...dto, 
       id: randomBytes(16).toString('hex'),
-      user: { id: userId}
+      user: { /* id: */
+      }
     });
 
     await this.projectRepository.save(project);

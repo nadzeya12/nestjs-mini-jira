@@ -15,22 +15,6 @@ import { PassportModule } from '@nestjs/passport';
     imports: 
     [
         TypeOrmModule.forFeature([userEntity]),
-        JwtModule.registerAsync({
-            imports: [
-                ConfigModule,
-                PassportModule
-            ],
-            useFactory: async (configService: ConfigService) => {
-                return {
-                    secret: process.env.JWT_SECRET
-                };
-            },
-            inject: [ConfigService],
-            global: true
-        }),
-        JwtModule.register({
-            signOptions: { expiresIn: '60s' },
-        }),
         ConfigModule
     ],
     providers: [

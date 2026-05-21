@@ -44,14 +44,12 @@ import { ProjectsController } from './projects/projects.controller';
               imports: [ConfigModule],
               useFactory: async (configService: ConfigService) => {
                   return {
-                    secret: 'mnkdjs8sdnihjn33kmcks9',
+                    secret: configService.getOrThrow('JWT_SECRET'),
+                    signOptions: { expiresIn: '1d' },
                   };
               },
               inject: [ConfigService],
               global: true
-          }),
-          JwtModule.register({
-              signOptions: { expiresIn: '60s' },
           }),
   //TasksModule,
   ProjectsModule,
