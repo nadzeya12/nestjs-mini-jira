@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { projectEntity } from './entities/project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateProjectDto } from './dto/create.project.dto';
 import { randomBytes } from 'crypto';
 import { userEntity } from '../users/entities/user.entity';
+import { AuthGuard } from './guards/token.guard';
 
 @Injectable()
 export class ProjectsService {
@@ -15,25 +16,19 @@ export class ProjectsService {
     private readonly usersRepository: Repository<userEntity>
   ) {}
   
-  async findAllByUser(userId: string): Promise<projectEntity[]> {
-
-    const existsUser = await this.usersRepository.exists({
-      where: { id: userId}
-    });
-
-    if (!existsUser) {
-      throw new NotFoundException('User does not exist')
-    }
+  async findAllByUser(id: string): Promise<projectEntity[]> {
 
     return await this.projectRepository.find({ 
-      where: {userId: userId}
+      where: {
+        userId: id
+      },
     });
   }
 
-  async findById(userId: string): Promise<projectEntity> {
+  async findById(id: string): Promise<projectEntity> {
     const project = await this.projectRepository.findOne({
       where: {
-        userId: userId,
+        id: id,
       },
     });
 
@@ -43,20 +38,17 @@ export class ProjectsService {
   }
 
   async deleteProject(id: string) {
-    const project = await this.projectRepository.findOneBy({id});
+    const result = await this.projectRepository.delete(id);
 
-    if(!project) throw new NotFoundException('Project with id: ${id} not found');
-
-    return await this.projectRepository.remove(project);
+    return HttpStatus.NO_CONTENT;
   }
 
-  async createProject( dto: CreateProjectDto ): Promise<projectEntity> {
+  async createProject(dto: CreateProjectDto, userId: string): Promise<projectEntity> {
 
     const project = this.projectRepository.create({
       ...dto, 
       id: randomBytes(16).toString('hex'),
-      user: { /* id: */
-      }
+      user: { id:  userId}
     });
 
     await this.projectRepository.save(project);

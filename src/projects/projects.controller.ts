@@ -1,41 +1,55 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, Query, UseGuards} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { Request } from 'express';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create.project.dto';
-import { projectOwnerGuard } from './guards/project.owner.guard';
-import { listOfProjects } from './guards/findlistProjects.guard';
-import { Headers } from '@nestjs/common';
 import { AuthGuard } from './guards/token.guard';
+import { projectOwnerGuard } from './guards/project.owner.guard';
+import { userEntity } from '../users/entities/user.entity';
+import { currentUser } from './decorators/decorator';
 
 @Controller('projects')
-
 export class ProjectsController {
-  constructor(private readonly projectService: ProjectsService) {}
+  constructor(private readonly projectService: ProjectsService) { }
 
   @Get(':id')
   @UseGuards(AuthGuard, projectOwnerGuard)
-  findById(@Param('id') userId: string) {
-    return this.projectService.findById(userId);
+  findById(@Param('id') id: string) {
+    return this.projectService.findById(id);
   }
 
   @Get()
-  @UseGuards(listOfProjects)
+  @UseGuards(AuthGuard)
   findAll(
-    @Headers('userId') userId: string) {
-    console.log('returned id: ', userId)
-    return this.projectService.findAllByUser(userId);
+    @currentUser() user: any,
+  ) {
+    return this.projectService.findAllByUser(user.id);
   }
 
-  // @Post()
-  // @UseGuards(projectOwnerGuard)
-  // create( @Body() dto: CreateProjectDto ) {
-  //   return this.projectService.createProject(dto);
-  // }
+  @Post()
+  @UseGuards(AuthGuard)
+  create(
+    @currentUser() user: any,
+    @Body() dto: CreateProjectDto,
+  ) {
+    return this.projectService.createProject(dto, user.id);
+  }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(AuthGuard, projectOwnerGuard)
   deleteProject(@Param('id') id: string) {
     return this.projectService.deleteProject(id);
   }
-
-
 }
