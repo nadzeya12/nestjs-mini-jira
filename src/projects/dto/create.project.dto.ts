@@ -12,7 +12,6 @@ export class CreateProjectDto {
     
     @IsString()
     @IsOptional()
-    //@Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
     @Matches(/^$|^(?!\s+$).+/) 
 
     description!: string;
