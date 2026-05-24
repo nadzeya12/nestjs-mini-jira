@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { projectEntity } from './entities/project.entity';
+import { projectEntity } from './src/projects/entities/project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateProjectDto } from './dto/create.project.dto';
+import { CreateProjectDto } from './src/projects/dto/create.project.dto';
 import { randomBytes } from 'crypto';
-import { userEntity } from '../users/entities/user.entity';
+import { userEntity } from './src/users/entities/user.entity';
 
 //OK
 @Injectable()
@@ -51,13 +51,12 @@ export class ProjectsService {
     return await this.projectRepository.remove(project);
   }
 
-  async createProject( dto: CreateProjectDto ): Promise<projectEntity> {
+  async createProject(dto: CreateProjectDto, userId: string): Promise<projectEntity> {
 
     const project = this.projectRepository.create({
       ...dto, 
       id: randomBytes(16).toString('hex'),
-      user: { /* id: */
-      }
+      user: { id:  userId}
     });
 
     await this.projectRepository.save(project);

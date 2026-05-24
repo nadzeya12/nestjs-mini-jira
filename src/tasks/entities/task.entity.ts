@@ -1,48 +1,46 @@
-// import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
-// import { projectEntity } from "../../projects/entities/project.entity";
-// import { IsString } from "class-validator";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { projectEntity } from "../../projects/entities/project.entity";
+import { IsString } from "class-validator";
 
-// export enum taskStatus {
-// TO_DO = 'to_do',
-// IN_PROGRESS = 'in_progress',
-// DONE = 'done'
-// }
+export enum taskStatus {
+TO_DO = 'to_do',
+IN_PROGRESS = 'in_progress',
+DONE = 'done'
+}
 
-// @Entity({ name: 'tasks'})
-// export class tasksEntity {
+@Entity({ name: 'tasks'})
+export class tasksEntity {
 
-//     @PrimaryGeneratedColumn()
-//     @IsString()
-//     id!: string;
+    @PrimaryGeneratedColumn()
+    @IsString()
+    id!: string;
 
-//     @Column({
-//         type: 'text',
-//         nullable: false,
-//     })
-//     title!: string;
+    @Column({
+        type: 'text',
+        nullable: false,
+    })
+    title!: string;
 
-//     @Column({
-//         type: 'text',
-//         nullable: true,
-//     })
-//     description!: string;
+    @Column({
+        type: 'text',
+        nullable: true,
+    })
+    description!: string;
 
-//     @CreateDateColumn()
-//     createdAt!: Date;
+    @CreateDateColumn()
+    createdAt!: Date;
 
-//     @Column({
-//         type: 'enum',
-//         enum: taskStatus
-//     })
-//     status!: string
+    @Column({
+        type: 'enum',
+        enum: taskStatus
+    })
+    status!: string
 
-//     @Column({name: 'userId'})
-//     projectId!: string;
+    @Column({name: 'userId'})
+    projectId!: string;
 
-//     @ManyToOne(() => projectEntity, (project) => project.id, {
-//         onDelete: 'CASCADE'
-//     })
-//     @JoinColumn({ name: 'projectId'})
-//     projects!: projectEntity[];
-// }
+    @ManyToOne(() => projectEntity, (project) => project.id, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'projectId'})
+    project!: projectEntity;
+}
 

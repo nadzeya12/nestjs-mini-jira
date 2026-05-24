@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
-import { ProjectsService } from "../projects.service";
+import { ProjectsService } from "./projects.service";
 
 @Injectable()
 export class listOfProjects implements CanActivate {

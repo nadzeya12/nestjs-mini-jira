@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-//import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { userEntity } from './users/entities/user.entity';
@@ -14,17 +13,16 @@ import { ProjectsModule } from './projects/projects.module';
 import { projectEntity } from './projects/entities/project.entity';
 import { ProjectsService } from './projects/projects.service';
 import { ProjectsController } from './projects/projects.controller';
-// import { APP_GUARD } from '@nestjs/core';
-// import { AuthGuard } from './auth/auth.guard';
-// import { TasksModule } from './tasks/tasks.module';
-// import { tasksEntity } from './tasks/entities/task.entity';
+import { TasksModule } from './tasks/tasks.module';
+import { tasksEntity } from './tasks/entities/task.entity';
+import { TasksController } from './tasks/tasks.controller';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true
     }),
-    TypeOrmModule.forFeature([userEntity, projectEntity, //tasksEntity
+    TypeOrmModule.forFeature([userEntity, projectEntity, tasksEntity
     ]),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -51,22 +49,17 @@ import { ProjectsController } from './projects/projects.controller';
               inject: [ConfigService],
               global: true
           }),
-  //TasksModule,
+  TasksModule,
   ProjectsModule,
-  //UsersModule,
   AuthModule,
   ConfigModule
   ],
-  controllers: [AppController, AuthController, ProjectsController],
+  controllers: [AppController, AuthController, ProjectsController, TasksController],
   providers: [
     AppService, 
     AuthService, 
     UsersService,
     ProjectsService
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthGuard,
-    // },
   ],
 
 })
