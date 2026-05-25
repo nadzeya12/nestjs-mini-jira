@@ -4,16 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateProjectDto } from './dto/create.project.dto';
 import { randomBytes } from 'crypto';
-import { userEntity } from '../users/entities/user.entity';
-import { AuthGuard } from './guards/token.guard';
 
 @Injectable()
 export class ProjectsService {
   constructor (
     @InjectRepository(projectEntity) 
     private readonly projectRepository: Repository<projectEntity>,
-    @InjectRepository(userEntity)
-    private readonly usersRepository: Repository<userEntity>
   ) {}
   
   async findAllByUser(id: string): Promise<projectEntity[]> {
@@ -40,7 +36,7 @@ export class ProjectsService {
   async deleteProject(id: string) {
     const result = await this.projectRepository.delete(id);
 
-    return HttpStatus.NO_CONTENT;
+    return result;
   }
 
   async createProject(dto: CreateProjectDto, userId: string): Promise<projectEntity> {

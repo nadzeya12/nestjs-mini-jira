@@ -6,17 +6,13 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  ParseUUIDPipe,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common';
-import { Request } from 'express';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create.project.dto';
 import { AuthGuard } from './guards/token.guard';
 import { projectOwnerGuard } from './guards/project.owner.guard';
-import { userEntity } from '../users/entities/user.entity';
 import { currentUser } from './decorators/decorator';
 
 @Controller('projects')

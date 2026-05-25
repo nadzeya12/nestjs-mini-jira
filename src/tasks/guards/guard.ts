@@ -1,11 +1,14 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
-import { ProjectsService } from "../projects.service";
+import { ProjectsService } from "../../projects/projects.service";
 import { userEntity } from "../../users/entities/user.entity";
+import { TasksService } from "../tasks.service";
 
-//OK
 @Injectable()
-export class projectOwnerGuard implements CanActivate {
-    constructor (private readonly projectsService: ProjectsService) {}
+export class tasksProjectGuard implements CanActivate {
+    constructor (
+        private readonly tasksService: TasksService,
+        private readonly projectsService: ProjectsService
+    ) {}
 
     async canActivate(context: ExecutionContext): Promise <boolean> {
         const request = context.switchToHttp().getRequest();
@@ -24,11 +27,15 @@ export class projectOwnerGuard implements CanActivate {
             throw new NotFoundException('Project not found.')
         }
 
-        if(String(project.userId) !== String(user.id)) {
+        const taskId: string = request.params.id;
+
+        const task = await this.tasksService.findTask(taskId)
+
+        if(String(task.projectId) !== String(project.id)) {
             throw new ForbiddenException('No access.')
         }
 
-        request.project = project;
+        request.task = task;
         return true;
     }
 }
