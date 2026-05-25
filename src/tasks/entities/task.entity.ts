@@ -11,7 +11,11 @@ DONE = 'done'
 @Entity({ name: 'tasks'})
 export class tasksEntity {
 
+<<<<<<< HEAD
     @PrimaryColumn()
+=======
+    @PrimaryGeneratedColumn()
+>>>>>>> 92afc2c3f060577a416ea46a8cf97ea46c505627
     @IsString()
     id!: string;
 

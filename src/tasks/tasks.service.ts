@@ -5,7 +5,10 @@ import { Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create.task.dto';
 import { ProjectsService } from '../projects/projects.service';
 import { randomBytes } from 'crypto';
+<<<<<<< HEAD
 import { updateTaskDto } from './dto/update.task.dto';
+=======
+>>>>>>> 92afc2c3f060577a416ea46a8cf97ea46c505627
 
 @Injectable()
 export class TasksService {
@@ -23,6 +26,7 @@ export class TasksService {
         return task;
     }
 
+<<<<<<< HEAD
     async createTask (dto: CreateTaskDto): Promise<tasksEntity> {
 
         const task = this.taskRepository.create({
@@ -57,3 +61,21 @@ export class TasksService {
         return result;
     }
 }
+=======
+    async createTask (dto: CreateTaskDto, projectId: string): Promise<tasksEntity> {
+
+        const task = this.taskRepository.create({
+            ...dto,
+            id: randomBytes(16).toString('hex'),
+            project: {id: projectId}   
+        });     
+        await this.taskRepository.save(task);
+        return task;
+    }
+    async deleteTask(id: string) {
+        const result = await this.taskRepository.delete(id);
+    
+        return HttpStatus.NO_CONTENT;
+      }
+}
+>>>>>>> 92afc2c3f060577a416ea46a8cf97ea46c505627
