@@ -36,7 +36,7 @@ export class tasksEntity {
     })
     status!: string
 
-    @Column({name: 'userId'})
+    @Column({name: 'projectId'})
     projectId!: string;
 
     @ManyToOne(() => projectEntity, (project) => project.id, { onDelete: 'CASCADE' })

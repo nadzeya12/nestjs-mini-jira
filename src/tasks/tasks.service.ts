@@ -22,6 +22,15 @@ export class TasksService {
         return task;
     }
 
+    // async findTaskS (id: string): Promise<tasksEntity[]> {
+    //     const tasks = await this.taskRepository.find({
+    //         where: { id: id },
+    //     });
+        
+    //     if (!tasks) throw new NotFoundException('Task not found');
+    //     return tasks;
+    // }
+
     async createTask (dto: CreateTaskDto): Promise<tasksEntity> {
 
         const task = this.taskRepository.create({

@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
-import { ProjectsService } from "../projects.service";
 import { userEntity } from "../../users/entities/user.entity";
+import { ProjectsService } from "../projects.service";
 
 @Injectable()
 export class projectOwnerGuard implements CanActivate {

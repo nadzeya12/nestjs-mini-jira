@@ -9,7 +9,6 @@ export class updateTaskDto {
 title?: string
 
 @IsOptional()
-@MinLength(5)
 description?: string
 
 @IsOptional()

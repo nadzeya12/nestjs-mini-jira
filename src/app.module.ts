@@ -16,10 +16,7 @@ import { ProjectsController } from './projects/projects.controller';
 import { TasksModule } from './tasks/tasks.module';
 import { tasksEntity } from './tasks/entities/task.entity';
 import { TasksController } from './tasks/tasks.controller';
-<<<<<<< HEAD
 import { TasksService } from './tasks/tasks.service';
-=======
->>>>>>> 92afc2c3f060577a416ea46a8cf97ea46c505627
 
 @Module({
   imports: [
@@ -38,7 +35,7 @@ import { TasksService } from './tasks/tasks.service';
       port: configService.getOrThrow('POSTGRES_PORT'),
       username: 'postgres',
       password: configService.getOrThrow('POSTGRES_PASSWORD'),
-      database: 'nestjs'
+      database: 'moja_baza'
     }),
     inject: [ConfigService],
   }),
@@ -63,12 +60,8 @@ import { TasksService } from './tasks/tasks.service';
     AppService, 
     AuthService, 
     UsersService,
-<<<<<<< HEAD
     ProjectsService,
     TasksService
-=======
-    ProjectsService
->>>>>>> 92afc2c3f060577a416ea46a8cf97ea46c505627
   ],
 
 })

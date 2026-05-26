@@ -44,7 +44,7 @@ export class ProjectsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(AuthGuard, projectOwnerGuard)
+  @UseGuards(AuthGuard)
   deleteProject(@Param('id') id: string) {
     return this.projectService.deleteProject(id);
   }
