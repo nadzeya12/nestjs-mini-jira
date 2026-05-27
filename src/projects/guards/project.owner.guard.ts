@@ -9,9 +9,10 @@ export class projectOwnerGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise <boolean> {
         const request = context.switchToHttp().getRequest();
 
-        const user: userEntity = request.headers.token;
+        const user: userEntity = request.user;
+        console.log('request user: ', user)
 
-        const projectId: string = request.Param.id;
+        const projectId: string = request.params.id;
 
         if(!user) {
             throw new ForbiddenException('No loginned user');

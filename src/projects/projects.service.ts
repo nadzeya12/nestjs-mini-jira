@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { projectEntity } from './entities/project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -22,6 +22,7 @@ export class ProjectsService {
   }
 
   async findById(id: string): Promise<projectEntity> {
+    
     const project = await this.projectRepository.findOne({
       where: {
         id: id,
@@ -35,6 +36,8 @@ export class ProjectsService {
 
   async deleteProject(id: string) {
     const result = await this.projectRepository.delete(id);
+
+    if(!result) throw new HttpException('No result', HttpStatus.NOT_FOUND)
 
     return result;
   }

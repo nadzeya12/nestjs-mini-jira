@@ -3,20 +3,24 @@ import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create.task.dto';
 import { AuthGuard } from '../projects/guards/token.guard';
 import { updateTaskDto } from './dto/update.task.dto';
-import { tasksProjectGuard } from './guards/guard';
+import { currentProject } from './decorators/decorator';
+import { TaskOwnerGuard } from './guards/count.guard';
+import { projectOwnerGuard } from '../projects/guards/project.owner.guard';
 
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
-  // @Get(':projectId')
-  // @UseGuards(AuthGuard)
-  // get(@Param('id') projectId: string){
-  //   return this.tasksService.findTaskS(projectId);
-  // }
+  @Get(':projectId')
+  @UseGuards(AuthGuard, projectOwnerGuard)
+  get(
+    @Param('id') id: string)
+    {
+    return this.tasksService.findTasksByProject(id);
+  }
 
   @Post()
-  @UseGuards(AuthGuard, tasksProjectGuard)
+  @UseGuards(AuthGuard)
   create(
     @Body() dto: CreateTaskDto) 
     {
@@ -24,19 +28,18 @@ export class TasksController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, TaskOwnerGuard)
   updateTask(
-    @Param('id') id: string, 
+    @Param('id') taskId: string, 
     @Body() dto: updateTaskDto) 
     {
-    return this.tasksService.updateTask(id, dto);
+    return this.tasksService.updateTask(taskId, dto);
   }
-  
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, TaskOwnerGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteTask(@Param('id') id: string) {
-      return this.tasksService.deleteTask(id);
+  deleteTask(@Param('id') taskId: string) {
+      return this.tasksService.deleteTask(taskId);
   }
 }
