@@ -19,7 +19,7 @@ description!: string
 @IsEnum(taskStatus)
 status!: string
 
-@IsNotEmpty()
+@IsNotEmpty({ message: 'Project id nie może być pustym'})
 @IsString()
 projectId!: string
 }

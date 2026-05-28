@@ -1,9 +1,10 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, CreateDateColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, CreateDateColumn, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { userEntity } from "../../users/entities/user.entity";
 import { IsUUID } from "class-validator";
 import { tasksEntity } from "../../tasks/entities/task.entity";
 
 @Entity({ name: 'projects'})
+@Unique(['title'])
 export class projectEntity {
     @PrimaryColumn() 
     id!: string;
@@ -11,7 +12,6 @@ export class projectEntity {
     @Column({
         type: 'text',
         nullable: false,
-        unique: true
     })
     title!: string;
 
@@ -34,5 +34,6 @@ export class projectEntity {
     })
     createdAt!: Date;
     
+    @OneToMany(() => tasksEntity, (task) => task.project)
     tasks!: tasksEntity[];
 }

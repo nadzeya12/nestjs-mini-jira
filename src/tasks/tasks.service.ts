@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create.task.dto';
 import { randomBytes } from 'crypto';
 import { updateTaskDto } from './dto/update.task.dto';
+import { projectEntity } from '../projects/entities/project.entity';
 
 @Injectable()
 export class TasksService {
@@ -22,13 +23,13 @@ export class TasksService {
         return task;
     }
 
-    async findTasksByProject (id: string): Promise<tasksEntity[]> {
+    async findTasksByProject (projectId: string): Promise<tasksEntity[]> {
 
         const tasks = await this.taskRepository.find({
-            where: { projectId: id },
+            where: { projectId: projectId },
         });
         
-        if (!tasks) throw new NotFoundException('Tasks not found');
+        if (tasks.length === 0) throw new NotFoundException('No tasks yet');
         return tasks;
     }
 

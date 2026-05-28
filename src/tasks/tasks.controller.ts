@@ -12,11 +12,11 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Get(':projectId')
-  @UseGuards(AuthGuard, projectOwnerGuard)
+  @UseGuards(AuthGuard, TaskOwnerGuard)
   get(
-    @Param('id') id: string)
+    @Param('projectId') projectId: string)
     {
-    return this.tasksService.findTasksByProject(id);
+    return this.tasksService.findTasksByProject(projectId);
   }
 
   @Post()
@@ -36,8 +36,9 @@ export class TasksController {
     return this.tasksService.updateTask(taskId, dto);
   }
 
+  //Jeszcze sprawdzić na ownera
   @Delete(':id')
-  @UseGuards(AuthGuard, TaskOwnerGuard)
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteTask(@Param('id') taskId: string) {
       return this.tasksService.deleteTask(taskId);

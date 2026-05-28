@@ -14,9 +14,16 @@ import { CreateProjectDto } from './dto/create.project.dto';
 import { AuthGuard } from './guards/token.guard';
 import { projectOwnerGuard } from './guards/project.owner.guard';
 import { currentUser } from './decorators/decorator';
-import { ApiHeader, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiHeader, ApiNoContentResponse, ApiOkResponse, ApiOperation} from '@nestjs/swagger';
+import { ApiCommonResponcesForProjects } from '../swagger/Api.common.responces';
 
 @Controller('projects')
+@ApiCommonResponcesForProjects()
+@ApiHeader({ 
+    name: 'auth-token', 
+    description: 'user token'
+  })
+
 export class ProjectsController {
   constructor(private readonly projectService: ProjectsService) { }
 
@@ -24,11 +31,18 @@ export class ProjectsController {
     summary: 'Get a project by Id',
     description: 'This endpoint returns project by the id from parametrs.'
   })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Project was found succsesfully!'})
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Project not found.'})
-  @ApiHeader({ 
-    name: 'auth-token', 
-    description: 'user token'
+  @ApiOkResponse({
+    description: 'OK',
+    example: {
+      "id": "5529aee504b25b21b53af4a923eada4d",
+      "title": "Small project",
+      "description": null,
+      "userId": "408fe856-6b5b-4bd1-b050-01b162ed82d8",
+      "user": {
+        "id": "408fe856-6b5b-4bd1-b050-01b162ed82d8"
+      },
+      "createdAt": "2026-05-28"
+    }
   })
   @Get(':id')
   @UseGuards(AuthGuard, projectOwnerGuard)
@@ -36,14 +50,42 @@ export class ProjectsController {
     return this.projectService.findById(id);
   }
 
+  @ApiOperation({ 
+    summary: `Get an array of all user's projects`,
+    description: 'This endpoint returns the array of projects by loginned user.'
+  })
+  @ApiOkResponse({
+    description: 'OK',
+    example: {
+      "project 1": "[...}",
+      "project 2": "[...]"
+    }
+  })
+
   @Get()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, projectOwnerGuard)
   findAll(
     @currentUser() user: any,
   ) {
     return this.projectService.findAllByUser(user.id);
   }
 
+  @ApiOperation({ 
+    summary: `Create new project`,
+    description: 'This endpoint creates a new project for loginned user.'
+  })
+  @ApiCreatedResponse({ description: 'Created succesfully!',
+    example: {
+      "id": "5529aee504b25b21b53af4a923eada4d",
+    "title": "Small project",
+    "description": null,
+    "userId": "408fe856-6b5b-4bd1-b050-01b162ed82d8",
+    "user": {
+        "id": "408fe856-6b5b-4bd1-b050-01b162ed82d8"
+    },
+    "createdAt": "2026-05-28"
+    }
+  })
   @Post()
   @UseGuards(AuthGuard)
   create(
@@ -53,6 +95,11 @@ export class ProjectsController {
     return this.projectService.createProject(dto, user.id);
   }
 
+  @ApiOperation({
+    summary: "Delete project by id.",
+    description: 'This endpoint deletes project by id.'
+  })
+  @ApiNoContentResponse({ description: 'No content, project has been deleted'})
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard, projectOwnerGuard)

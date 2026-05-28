@@ -26,7 +26,7 @@ export class AuthService {
 
     if (!isValidPass) { 
       throw new BadRequestException(
-        "invalid password"
+        "Invalid password."
       );
     }
 
@@ -47,7 +47,8 @@ export class AuthService {
     .getOne();
 
     if (existUser) {
-      throw new HttpException('User is already exists', HttpStatus.BAD_REQUEST);
+      throw new HttpException(`Email is already in use. Try to logIn or provide an another one email adress`, 
+        HttpStatus.BAD_REQUEST);
     }
 
     dto.password = await bcrypt.hash(

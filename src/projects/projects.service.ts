@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { projectEntity } from './entities/project.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -14,11 +14,15 @@ export class ProjectsService {
   
   async findAllByUser(id: string): Promise<projectEntity[]> {
 
-    return await this.projectRepository.find({ 
+    const result = await this.projectRepository.find({ 
       where: {
         userId: id
       },
     });
+
+    if(result.length === 0) throw new NotFoundException('User has no projects yet.')
+    
+    return result;
   }
 
   async findById(id: string): Promise<projectEntity> {
@@ -44,14 +48,23 @@ export class ProjectsService {
 
   async createProject(dto: CreateProjectDto, userId: string): Promise<projectEntity> {
 
-    const project = this.projectRepository.create({
-      ...dto, 
-      id: randomBytes(16).toString('hex'),
-      user: { id:  userId}
-    });
+    try {
 
-    await this.projectRepository.save(project);
+      const project = this.projectRepository.create({
+        ...dto, 
+        id: randomBytes(16).toString('hex'),
+        user: { id:  userId}
+      });
 
-    return project;
+      await this.projectRepository.save(project);
+
+      return project;
+    } catch (error: any) {
+      if (error.message?.includes('unique constraint') || error.detail?.includes('already exists')) {
+        throw new ConflictException('Projekt o takim tytule już istnieje!');
+      }
+      
+      throw new InternalServerErrorException('Coś poszło nie tak na serwerze');
+    }
   }
 }
