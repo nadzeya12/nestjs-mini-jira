@@ -10,7 +10,6 @@ export class projectOwnerGuard implements CanActivate {
         const request = context.switchToHttp().getRequest();
 
         const user: userEntity = request.user;
-        console.log('request user: ', user)
 
         const projectId: string = request.params.id;
 

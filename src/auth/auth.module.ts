@@ -1,15 +1,10 @@
 import { Module } from '@nestjs/common';
-//import { UsersModule } from '../users/users.module'; 
 import { AuthService } from './auth.service';
-import {JwtModule} from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-// import { APP_GUARD } from '@nestjs/core';
-// import { AuthGuard } from './auth.guard';
+import { ConfigModule} from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { UsersService } from '../users/users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { userEntity } from '../users/entities/user.entity';
-import { PassportModule } from '@nestjs/passport';
 
 @Module({
     imports: 
@@ -18,10 +13,6 @@ import { PassportModule } from '@nestjs/passport';
         ConfigModule
     ],
     providers: [
-        // {
-        //     provide: APP_GUARD,
-        //     useClass: AuthGuard,
-        // },
         AuthService,
         UsersService
     ],

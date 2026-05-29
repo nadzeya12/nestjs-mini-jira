@@ -1,7 +1,7 @@
 import { applyDecorators } from "@nestjs/common";
-import { ApiBadRequestResponse, ApiForbiddenResponse, ApiNotFoundResponse, ApiUnauthorizedResponse } from "@nestjs/swagger";
+import { ApiBadRequestResponse, ApiForbiddenResponse, ApiNotFoundResponse,  ApiUnauthorizedResponse } from "@nestjs/swagger";
 
-export function ApiCommonResponcesForProjects () {
+export function ApiCommonResponcesForTasks () {
     return applyDecorators(
         ApiUnauthorizedResponse({ 
             description: 'User not authorized',
@@ -28,7 +28,7 @@ export function ApiCommonResponcesForProjects () {
         ApiNotFoundResponse({ 
             description: 'User not found',
         example: {
-            "message": "Project not found",
+            "message": "Task not found",
             "error": "Not Found",
             "statusCode": 404
         }}),

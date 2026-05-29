@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, CreateDateColumn, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, CreateDateColumn, OneToMany, Unique } from "typeorm";
 import { userEntity } from "../../users/entities/user.entity";
 import { IsUUID } from "class-validator";
 import { tasksEntity } from "../../tasks/entities/task.entity";

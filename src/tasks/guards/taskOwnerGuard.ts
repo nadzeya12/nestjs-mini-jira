@@ -3,7 +3,6 @@ import { Repository } from "typeorm";
 import { tasksEntity } from "../entities/task.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { projectEntity } from "../../projects/entities/project.entity";
-import { use } from "passport";
 
 @Injectable()
 export class TaskOwnerGuard implements CanActivate {

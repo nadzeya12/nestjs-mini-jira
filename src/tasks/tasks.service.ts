@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create.task.dto';
 import { randomBytes } from 'crypto';
 import { updateTaskDto } from './dto/update.task.dto';
-import { projectEntity } from '../projects/entities/project.entity';
 
 @Injectable()
 export class TasksService {
@@ -62,12 +61,13 @@ export class TasksService {
     }
 
     async deleteTask(taskId: string) {
-       const result = await this.taskRepository.delete(taskId);
 
-       if(!result) {
-        throw new HttpException('No result', HttpStatus.NOT_FOUND);
-       }
-    
+        const result = await this.taskRepository.delete(taskId);
+
+        if (result.affected === 0) {
+            throw new HttpException('Task not found', HttpStatus.NOT_FOUND);
+        }
+
         return result;
     }
 }

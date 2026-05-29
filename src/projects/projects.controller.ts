@@ -63,7 +63,7 @@ export class ProjectsController {
   })
 
   @Get()
-  @UseGuards(AuthGuard, projectOwnerGuard)
+  @UseGuards(AuthGuard)
   findAll(
     @currentUser() user: any,
   ) {

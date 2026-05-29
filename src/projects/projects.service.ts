@@ -53,7 +53,7 @@ export class ProjectsService {
       const project = this.projectRepository.create({
         ...dto, 
         id: randomBytes(16).toString('hex'),
-        user: { id:  userId}
+        user: { id: userId}
       });
 
       await this.projectRepository.save(project);
