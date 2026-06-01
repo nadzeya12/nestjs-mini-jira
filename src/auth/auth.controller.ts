@@ -2,7 +2,7 @@ import { Controller, Body, Post} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { loginDto, signUpDto } from './dto/SignIn.dto';
 import { userEntity } from '../users/entities/user.entity';
-import { ApiBadGatewayResponse, ApiBadRequestResponse, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiBadGatewayResponse, ApiBadRequestResponse, ApiCreatedResponse, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -11,7 +11,7 @@ export class AuthController {
     @ApiOperation({
       summary: "Register a user"
     })
-    @ApiOkResponse({
+    @ApiCreatedResponse({
       description: "Ok! User created.",
       example: {
     "id": "a27fea2d-31f3-43b7-b505-8aec5b108832",
@@ -31,7 +31,7 @@ export class AuthController {
   @ApiOperation({
       summary: "Register a user"
     })
-    @ApiOkResponse({
+    @ApiCreatedResponse({
       description: "Ok! User loginned",
       example: {
         "token": "your access token"

@@ -50,6 +50,10 @@ export class TasksService {
 
         if (!task) throw new NotFoundException('Task not found');
 
+        if (!dto) {
+            throw new HttpException("Nothing to update", HttpStatus.BAD_REQUEST)
+        }
+
         const updatedTask = await this.taskRepository.preload({
             id: taskId,
             ...dto

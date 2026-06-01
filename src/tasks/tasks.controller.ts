@@ -81,7 +81,7 @@ export class TasksController {
     })
   @ApiNoContentResponse({ description: 'No content, task has been deleted'})
   @Delete(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, CountGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteTask(@Param('id') taskId: string) {
     return this.tasksService.deleteTask(taskId);

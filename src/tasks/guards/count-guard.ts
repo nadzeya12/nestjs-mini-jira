@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
+import { CanActivate, ExecutionContext, ForbiddenException, HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { tasksEntity } from "../entities/task.entity";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -17,13 +17,16 @@ export class CountGuard implements CanActivate {
     if (!userId || !taskId) return false;
 
     const count = await this.taskRepository.count({
-  where: {
-    id: taskId,
-    project: {
-      userId: userId
+      where: {
+        id: taskId,
+        project: {
+          userId: userId
+        }
+      }
+    });
+    if (!count) {
+      throw new HttpException('Something were wrong', HttpStatus.BAD_REQUEST)
     }
-  }
-});
     return true;
   }
 }
